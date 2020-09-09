@@ -1,2 +1,5 @@
-# multipermute
-functions to generate the permutations of a multiset
+# multichoose
+
+**TODO**
+- [ ] tested impl
+- [ ] benchmarks
