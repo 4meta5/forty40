@@ -1,6 +1,43 @@
 //! ## Counting Rules
 use std::{collections::HashMap, hash::Hash};
 
+#[derive(Clone)]
+pub struct Elem<T> {
+    freq: usize,
+    item: T,
+}
+impl<T: Clone> Elem<T> {
+    pub fn new(freq: usize, item: T) -> Self {
+        Self { freq, item }
+    }
+    pub fn freq(&self) -> usize {
+        self.freq
+    }
+}
+// wrapper required to circumvent inability to impl From<Vec<T>>
+pub struct Vector<T>(pub Vec<T>);
+// should be de-duplicated by construction, see From<Vector<T>> impl below
+pub type MultiSet<T> = Vec<Elem<T>>;
+
+impl<T: Clone + Eq + Hash> From<Vector<T>> for MultiSet<T> {
+    fn from(other: Vector<T>) -> MultiSet<T> {
+        let mut frequencies: HashMap<T, usize> = HashMap::new();
+        other.0.into_iter().for_each(|n| {
+            if let Some(v) = frequencies.get(&n) {
+                frequencies.insert(n, v + 1usize);
+            } else {
+                frequencies.insert(n, 1usize);
+            }
+        });
+        let mut ret = MultiSet::<T>::new();
+        for (key, value) in frequencies.iter() {
+            let e = Elem::new(*value, key.clone());
+            ret.push(e);
+        }
+        ret
+    }
+}
+
 fn factorial(n: usize) -> usize {
     fn helper(acc: usize, m: usize) -> usize {
         match m {
@@ -56,6 +93,33 @@ Let n be a positive integer and let n_{1}, .., n_{k} be positive integers s.t. n
 
 If the boxes are not labeled and n_{1} = ... = n_{k}, then the number of partitions equals n! / (k!n_{1}!n_{2}! * ... * n_{k}!)
 */
-pub fn into_k_boxes<T: PartialEq + Clone>(v: &[T]) -> usize {
-    todo!()
+pub fn num_into_boxes<T: PartialEq + Clone + Hash + Eq>(
+    v: &[T],
+    boxes: &[usize],
+    labeled: bool,
+) -> usize {
+    let (vec, boxes) = (v.to_vec(), boxes.to_vec());
+    let num = factorial(vec.len());
+    let mut dom = 1usize;
+    // number of boxes
+    let k = boxes.len();
+    boxes.into_iter().for_each(|space| dom *= factorial(space));
+    if !labeled {
+        dom *= factorial(k);
+    }
+    num / dom
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn fac() {
+        assert_eq!(factorial(5), 120);
+        assert_eq!(factorial(6), 720);
+        assert_eq!(factorial(7), 5040);
+        assert_eq!(factorial(8), 40320);
+        assert_eq!(factorial(9), 362880);
+        assert_eq!(factorial(10), 3628800);
+    }
 }
