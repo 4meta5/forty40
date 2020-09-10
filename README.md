@@ -1,5 +1,1 @@
-# multichoose
-
-**TODO**
-- [ ] tested impl
-- [ ] benchmarks
+# multiset permutations and combinations
