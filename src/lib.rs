@@ -1,5 +1,7 @@
 mod heap;
 mod lex;
+pub use heap::Heap;
+pub use lex::Lex;
 use std::{collections::HashMap, hash::Hash};
 
 #[derive(Clone)]
