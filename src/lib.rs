@@ -1,8 +1,5 @@
-mod iter;
-mod list;
-pub use iter::Permutations;
-pub use list::List;
-
+mod heap;
+mod lex;
 use std::{collections::HashMap, hash::Hash};
 
 #[derive(Clone)]
@@ -42,15 +39,9 @@ impl<T: Clone + Eq + Hash> From<Vector<T>> for MultiSet<T> {
     }
 }
 
-/// Tail recursive factorial function
+/// Factorial function for calculating n! for some n
 fn fac(n: usize) -> usize {
-    fn helper(acc: usize, m: usize) -> usize {
-        match m {
-            0 => acc,
-            _ => helper(acc * m, m - 1),
-        }
-    }
-    helper(1, n)
+    (1..n + 1).fold(1, |a, b| a * b)
 }
 
 /// Permutation
