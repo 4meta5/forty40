@@ -1,24 +1,23 @@
-//! [src](https://github.com/janmarthedal/snippets/blob/master/rust/generate/permutations/src/lib.rs)
-pub struct Permutations<T> {
+//! Lexicographic r-permutation generation
+use std::hash::Hash;
+
+pub struct Lex<T> {
     pub mset: Vec<T>,
+    // r
     size: usize,
 }
 
-impl<T: Ord> Permutations<T> {
+impl<T: Ord> Lex<T> {
     pub fn new(mut mset: Vec<T>, size: usize) -> Self {
         mset.sort();
         Self { mset, size }
     }
-    pub fn to_set(&mut self) {
-        self.mset.dedup();
-    }
 }
 
-impl<T: Clone + Ord> Iterator for Permutations<T> {
+impl<T: Clone + Ord + Hash + PartialEq> Iterator for Lex<T> {
     type Item = Vec<T>;
 
     fn next(&mut self) -> Option<Vec<T>> {
-        // Lexicographic r-permutation generation
         let n = self.mset.len();
         let r = self.size;
         if n == 0 || r == 0 || r > n {
@@ -50,31 +49,24 @@ impl<T: Clone + Ord> Iterator for Permutations<T> {
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let n = self.mset.len();
-        let r = self.size;
-        if n == 0 || r == 0 || r > n {
+        if self.mset.len() == 0 || self.size == 0 || self.size > self.mset.len() {
             (0, Some(0))
         } else {
-            (1, Some(((n - r + 1)..=n).product()))
+            (1, Some(crate::m_perms(self.mset.as_slice())))
         }
     }
 }
 
-pub fn permutations<T: Clone + Ord>(s: &[T], size: usize) -> Permutations<T> {
-    let mset = s.to_vec();
-    Permutations::new(mset, size)
-}
-
 #[cfg(test)]
 mod test {
-    use crate::Permutations;
+    use super::*;
     #[test]
     fn tuple_size_check() {
         let raw_vec = vec![1, 3, 5, 7];
-        let one = Permutations::new(raw_vec.clone(), 1);
-        let two = Permutations::new(raw_vec.clone(), 2);
-        let three = Permutations::new(raw_vec.clone(), 3);
-        let four = Permutations::new(raw_vec.clone(), 4);
+        let one = Lex::new(raw_vec.clone(), 1);
+        let two = Lex::new(raw_vec.clone(), 2);
+        let three = Lex::new(raw_vec.clone(), 3);
+        let four = Lex::new(raw_vec.clone(), 4);
         assert_eq!(one.size, two.size - 1usize);
         assert_eq!(three.size_hint(), (1, Some(24)));
         assert_eq!(four.size_hint(), (1, Some(24)));
