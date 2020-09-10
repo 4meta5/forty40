@@ -20,7 +20,7 @@ impl<T: PartialEq + Clone + Hash + Eq> Heap<T> {
             //sort or deduplicate vec??
             Some(Heap {
                 state,
-                n: !0,
+                n: 0,
                 counter: [0; MAXHEAP - 1],
             })
         }
@@ -32,46 +32,36 @@ impl<T: PartialEq + Clone + Hash + Eq> Heap<T> {
             *c = 0;
         }
     }
-    /// Gets the number of permutations of state possible
-    pub fn get_perm_count(&self) -> usize {
-        crate::m_perms(self.state.as_slice())
-    }
 }
 
 impl<T: PartialEq + Clone + Hash + Eq + Ord> Iterator for Heap<T> {
     type Item = Vec<T>;
 
     fn next(&mut self) -> Option<Vec<T>> {
-        if self.n == !0 {
-            self.n = 0;
-            Some(self.state.clone())
-        } else {
-            while 1 + (self.n as usize) < self.state.len() {
-                let (n, nu) = (self.n as u8, self.n as usize);
-                // `counter[n]` is `i` in recursion
-                if self.counter[nu] <= n {
-                    // `n, nu` track current length - 2
-                    let j = if nu % 2 == 0 {
-                        self.counter[nu] as usize
-                    } else {
-                        0
-                    };
-                    self.state.swap(j, nu + 1);
-                    self.counter[nu] += 1;
-                    self.n = 0;
-                    return Some(self.state.clone());
+        while 1 + (self.n as usize) < self.state.len() {
+            let (n, nu) = (self.n as u8, self.n as usize);
+            // `counter[n]` is `i` in recursion
+            if self.counter[nu] <= n {
+                // `n, nu` track current length - 2
+                let j = if nu % 2 == 0 {
+                    self.counter[nu] as usize
                 } else {
-                    self.counter[nu] = 0;
-                    self.n += 1;
-                }
+                    0
+                };
+                self.state.swap(j, nu + 1);
+                self.counter[nu] += 1;
+                self.n = 0;
+                return Some(self.state.clone());
+            } else {
+                self.counter[nu] = 0;
+                self.n += 1;
             }
-            None
         }
+        None
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
-        let n_usize = self.n as usize;
-        if self.state.len() == 0 || n_usize == 0 || n_usize > self.state.len() {
+        if self.state.len() == 0 || self.n as usize > self.state.len() {
             (0, Some(0))
         } else {
             (1, Some(crate::m_perms(self.state.as_slice())))
@@ -87,8 +77,7 @@ mod test {
     fn test_heap() {
         let raw_vec: Vec<u32> = vec![1, 3, 5, 7];
         let mut h = Heap::new(raw_vec.as_slice()).unwrap();
-        assert_eq!(h.get_perm_count(), 24);
-        assert_eq!(h.next(), Some(vec![1, 3, 5, 7]));
+        assert_eq!(h.size_hint(), (1, Some(24)));
         assert_eq!(h.next(), Some(vec![3, 1, 5, 7]));
         assert_eq!(h.next(), Some(vec![5, 1, 3, 7]));
         assert_eq!(h.next(), Some(vec![1, 5, 3, 7]));
