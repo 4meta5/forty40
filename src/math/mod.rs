@@ -1,2 +1,2 @@
 pub mod count;
-pub mod number;
+pub mod tricks;

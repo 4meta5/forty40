@@ -1,6 +1,6 @@
 //! Combinatorics
 #![allow(dead_code)]
-use crate::math::number::*;
+use crate::math::tricks::*;
 use std::{collections::HashMap, hash::Hash};
 
 /// Order matters
