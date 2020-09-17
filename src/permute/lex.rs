@@ -68,8 +68,8 @@ mod test {
         let raw_vec = vec![1, 3, 5, 7];
         let one = Lex::new(raw_vec.clone(), 1);
         let two = Lex::new(raw_vec.clone(), 2);
-        let three = Lex::new(raw_vec.clone(), 3);
-        let four = Lex::new(raw_vec.clone(), 4);
+        // let three = Lex::new(raw_vec.clone(), 3);
+        // let four = Lex::new(raw_vec.clone(), 4);
         assert_eq!(one.size, two.size - 1usize);
         // assert_eq!(three.size_hint(), (1, Some(24)));
         // assert_eq!(four.size_hint(), (1, Some(24)));

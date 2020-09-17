@@ -15,13 +15,31 @@ fn n_cubed_sum(n: usize) -> usize {
     ((n * n) * ((n + 1) * (n + 1))) / 4
 }
 
-/// Euler's constant
-/// e = lim (1 + 1/n) as n approaches infinity
-fn euler_constant(n: usize) -> usize {
-    1 / fac(n)
+/// Euler's Constant Approximation
+/// e = lim (1 + 1/n)^{n} as n approaches infinity
+/// Returns (a, b) s.t. a/b is an approximation of e that improves with greater n
+fn euler_c(n: usize) -> (usize, usize) {
+    ((n + 1).pow(n as u32), n.pow(n as u32))
+}
+
+/// Bernoulli Number Approximation
+/// -> 2 should be replaced with e (in body)
+fn bernoulli_num(c: usize) -> (usize, usize) {
+    (c, 2usize.pow(c as u32) - 1)
 }
 
 /// Factorial function for calculating n! for some n
 pub fn fac(n: usize) -> usize {
     (1..n + 1).product()
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn test_e() {
+        assert_eq!((2, 1), euler_c(1));
+        assert_eq!((9, 4), euler_c(2));
+        assert_eq!((64, 27), euler_c(3));
+    }
 }
