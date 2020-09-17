@@ -1,11 +1,7 @@
 //! Combinatorics
 #![allow(dead_code)]
+use crate::math::number::*;
 use std::{collections::HashMap, hash::Hash};
-
-/// Factorial function for calculating n! for some n
-fn fac(n: usize) -> usize {
-    (1..n + 1).product()
-}
 
 /// Order matters
 /// n! / (n - k)!
