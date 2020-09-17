@@ -1,5 +1,4 @@
-mod compress;
 mod math;
-mod permute;
-pub use permute::heap::Heap;
-pub use permute::lex::Lex;
+mod shuffle;
+pub use shuffle::heap::Heap;
+pub use shuffle::lex::Lex;
