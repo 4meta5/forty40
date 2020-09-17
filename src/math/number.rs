@@ -37,6 +37,15 @@ pub fn fac(n: usize) -> usize {
 mod test {
     use super::*;
     #[test]
+    fn fac_tests() {
+        assert_eq!(fac(5), 120);
+        assert_eq!(fac(6), 720);
+        assert_eq!(fac(7), 5040);
+        assert_eq!(fac(8), 40320);
+        assert_eq!(fac(9), 362880);
+        assert_eq!(fac(10), 3628800);
+    }
+    #[test]
     fn test_e() {
         assert_eq!((2, 1), euler_c(1));
         assert_eq!((9, 4), euler_c(2));

@@ -118,15 +118,6 @@ pub fn mbox_perms<T: PartialEq + Clone + Hash + Eq>(
 mod test {
     use super::*;
     #[test]
-    fn fac_tests() {
-        assert_eq!(fac(5), 120);
-        assert_eq!(fac(6), 720);
-        assert_eq!(fac(7), 5040);
-        assert_eq!(fac(8), 40320);
-        assert_eq!(fac(9), 362880);
-        assert_eq!(fac(10), 3628800);
-    }
-    #[test]
     fn perm_tests() {
         assert_eq!(perm(2, 5, true), 25);
         assert_eq!(perm(2, 2, true), 4);
