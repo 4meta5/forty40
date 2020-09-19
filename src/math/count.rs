@@ -1,9 +1,9 @@
 //! Combinatorics
 #![allow(dead_code)]
-use std::{collections::HashMap, hash::Hash};
+use alloc::{collections::btree_map::BTreeMap, vec::Vec};
 
 /// Factorial function for calculating n! for some n
-fn fac(n: usize) -> usize {
+pub fn fac(n: usize) -> usize {
     (1..n + 1).product()
 }
 
@@ -71,11 +71,11 @@ pub fn r_perms<T: PartialEq + Clone>(r: usize, v: &[T]) -> usize {
 // numbers `n_{1}, n_{2}, n_{3}, ..., n_{k}` respectively. |S| = \sum_{i=1..k}{n_{i}}
 // The number of permutations of S equals n! / (n_{1}! * n_{2}! * ... * n_{k}! )
 // i.e. permutations of MISSISSIPPI = 11! / (4!4!2!)
-pub fn m_perms<T: PartialEq + Clone + Hash + Eq>(v: &[T]) -> usize {
+pub fn m_perms<T: PartialEq + Clone + Eq + Ord>(v: &[T]) -> usize {
     let vec = v.to_vec();
     let num = fac(vec.len());
-    fn get_unique_frequencies<S: Eq + Hash>(vector: Vec<S>) -> Vec<usize> {
-        let mut frequencies: HashMap<S, usize> = HashMap::new();
+    fn get_unique_frequencies<S: Eq + Ord>(vector: Vec<S>) -> Vec<usize> {
+        let mut frequencies: BTreeMap<S, usize> = BTreeMap::new();
         vector.into_iter().for_each(|n| {
             let new_v = if let Some(v) = frequencies.get(&n) {
                 v + 1usize
@@ -103,11 +103,7 @@ Let n be a positive integer and let n_{1}, .., n_{k} be positive integers s.t. n
 
 If the boxes are not labeled and n_{1} = ... = n_{k}, then the number of partitions equals n! / (k!n_{1}!n_{2}! * ... * n_{k}!)
 */
-pub fn mbox_perms<T: PartialEq + Clone + Hash + Eq>(
-    v: &[T],
-    boxes: &[usize],
-    labeled: bool,
-) -> usize {
+pub fn mbox_perms<T: PartialEq + Clone + Eq>(v: &[T], boxes: &[usize], labeled: bool) -> usize {
     let (vec, boxes) = (v.to_vec(), boxes.to_vec());
     let num = fac(vec.len());
     let mut dom = 1usize;
@@ -121,7 +117,7 @@ pub fn mbox_perms<T: PartialEq + Clone + Hash + Eq>(
 #[cfg(test)]
 mod test {
     use super::*;
-    #[test]
+    use alloc::vec;
     fn fac_tests() {
         assert_eq!(fac(5), 120);
         assert_eq!(fac(6), 720);
