@@ -1,2 +1,4 @@
-pub mod count;
-pub mod tricks;
+mod constants;
+mod count;
+mod logic;
+mod tricks;

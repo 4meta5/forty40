@@ -1,4 +1,4 @@
-//! Number Theory Helpers
+//! Number Theory Tricks
 #![allow(dead_code)]
 /// Sum of first n natural numbers
 fn n_sum(n: usize) -> usize {
@@ -15,40 +15,35 @@ fn n_cubed_sum(n: usize) -> usize {
     ((n * n) * ((n + 1) * (n + 1))) / 4
 }
 
-/// Euler's Constant Approximation
-/// e = lim (1 + 1/n)^{n} as n approaches infinity
-/// Returns (a, b) s.t. a/b is an approximation of e that improves with greater n
-fn euler_c(n: usize) -> (usize, usize) {
-    ((n + 1).pow(n as u32), n.pow(n as u32))
-}
-
-/// Bernoulli Number Approximation
-/// -> 2 should be replaced with e (in body)
-fn bernoulli_num(c: usize) -> (usize, usize) {
-    (c, 2usize.pow(c as u32) - 1)
-}
-
-/// Factorial function for calculating n! for some n
-pub fn fac(n: usize) -> usize {
-    (1..n + 1).product()
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
     #[test]
-    fn fac_tests() {
-        assert_eq!(fac(5), 120);
-        assert_eq!(fac(6), 720);
-        assert_eq!(fac(7), 5040);
-        assert_eq!(fac(8), 40320);
-        assert_eq!(fac(9), 362880);
-        assert_eq!(fac(10), 3628800);
+    fn n_sum_works() {
+        assert_eq!(n_sum(100), 5050);
+        assert_eq!(n_sum(5), 15);
+        assert_eq!(n_sum(6), 21);
+        assert_eq!(n_sum(7), 28);
+        assert_eq!(n_sum(8), 36);
+        assert_eq!(n_sum(9), 45);
+        assert_eq!(n_sum(10), 55);
     }
     #[test]
-    fn test_e() {
-        assert_eq!((2, 1), euler_c(1));
-        assert_eq!((9, 4), euler_c(2));
-        assert_eq!((64, 27), euler_c(3));
+    fn n_squared_sum_works() {
+        assert_eq!(n_squared_sum(5), 55);
+        assert_eq!(n_squared_sum(6), 91);
+        assert_eq!(n_squared_sum(7), 140);
+        assert_eq!(n_squared_sum(8), 204);
+        assert_eq!(n_squared_sum(9), 285);
+        assert_eq!(n_squared_sum(10), 385);
+    }
+    #[test]
+    fn n_cubed_sum_works() {
+        assert_eq!(n_cubed_sum(5), 225);
+        assert_eq!(n_cubed_sum(6), 441);
+        assert_eq!(n_cubed_sum(7), 784);
+        assert_eq!(n_cubed_sum(8), 1296);
+        assert_eq!(n_cubed_sum(9), 2025);
+        assert_eq!(n_cubed_sum(10), 3025);
     }
 }
