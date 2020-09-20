@@ -9,7 +9,6 @@ pub struct DivErr;
 
 /// Euler's Constant Approximation
 /// e = lim (1 + 1/n)^{n} as n approaches infinity
-/// Returns (a, b) s.t. a/b is an approximation of e that improves with greater n
 fn euler_c(n: FixedU128) -> Result<FixedU128, DivErr> {
     let exp: f64 = n.to_fraction();
     if let Some(i) = FixedU128::checked_div(&(n + FixedU128::one()), &n) {
