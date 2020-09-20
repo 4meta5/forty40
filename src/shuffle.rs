@@ -1,15 +1,18 @@
+//! Plan is to benchmark shuffling implementations against each other and try to optimize tf out of them
+//!
+//! Lots of applications, including the shuffle-not-swap consensus primitive and block cipher constructions (see Feistel Networks)
 use alloc::{collections::btree_map::BTreeMap, vec::Vec};
 use rand::Rng;
 
 #[derive(Clone)]
-/// Permutation of Vec<T>
-pub struct Perm<T> {
+/// Permutation of Vec<T> via Fisher-Yates Shuffle
+pub struct FisherYates<T> {
     vec: Vec<T>,
     state: Vec<usize>,
     counter: usize,
 }
 
-impl<T: Clone + Ord> Perm<T> {
+impl<T: Clone + Ord> FisherYates<T> {
     pub fn new(v: &[T]) -> Self {
         let vec = v.to_vec();
         let mut state = Vec::<usize>::new();
@@ -18,16 +21,70 @@ impl<T: Clone + Ord> Perm<T> {
             state.push(i);
         }
         let counter = state.len(); // == vec.len() by construction
-        Perm {
+        FisherYates {
             vec,
             state,
-            counter: counter,
+            counter,
+        }
+    }
+}
+
+/// Fisher-Yates Shuffle, random in-place permutations with constant storage requirements
+impl<T: Clone + Ord> Iterator for FisherYates<T> {
+    type Item = Vec<usize>;
+    fn next(&mut self) -> Option<Vec<usize>> {
+        // TODO: only generate rng once instead of once per loop
+        let mut rng = rand::thread_rng();
+        if self.counter > 0usize {
+            self.counter -= 1usize;
+            let j = rng.gen_range(0, self.counter + 1usize);
+            let temp = self.state[self.counter];
+            if j != self.counter {
+                self.state[self.counter] = self.state[j];
+            }
+            self.state[j] = temp;
+            Some(self.state.clone())
+        } else {
+            None
+        }
+    }
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let n = self.vec.len();
+        if n == 0 {
+            (0, Some(0))
+        } else {
+            (1, Some((1..n + 1).product())) //n!
+        }
+    }
+}
+
+#[derive(Clone)]
+/// Permutation of Vec<T> via Sattolo Cycles
+pub struct SatCycles<T> {
+    vec: Vec<T>,
+    state: Vec<usize>,
+    counter: usize,
+}
+
+impl<T: Clone + Ord> SatCycles<T> {
+    pub fn new(v: &[T]) -> Self {
+        let vec = v.to_vec();
+        let mut state = Vec::<usize>::new();
+        // TODO: find a way to not require this loop, maybe generated from v
+        for (i, _) in v.iter().enumerate() {
+            state.push(i);
+        }
+        let counter = state.len(); // == vec.len() by construction
+        SatCycles {
+            vec,
+            state,
+            counter,
         }
     }
 }
 
 /// Sattolo Cycles, random in-place permutations with constant storage requirements
-impl<T: Clone + Ord> Iterator for Perm<T> {
+impl<T: Clone + Ord> Iterator for SatCycles<T> {
     type Item = Vec<usize>;
     fn next(&mut self) -> Option<Vec<usize>> {
         // TODO: only generate rng once instead of once per loop
@@ -43,13 +100,22 @@ impl<T: Clone + Ord> Iterator for Perm<T> {
             None
         }
     }
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let n = self.vec.len();
+        if n == 0 {
+            (0, Some(0))
+        } else {
+            (1, Some((1..n + 1).product())) //n!
+        }
+    }
 }
 
 pub trait Transform {
     fn transform(&mut self) -> bool;
 }
 /// Transforms the Vec using the state of the index permutation
-impl<T: Clone> Transform for Perm<T> {
+/// -> Returns true if transformed
+impl<T: Clone> Transform for SatCycles<T> {
     fn transform(&mut self) -> bool {
         // TODO: make two inner loops one loop
         if self.state.len() == self.vec.len() {
@@ -94,5 +160,21 @@ impl<T: Clone> Transform for Perm<T> {
         } else {
             false
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use alloc::vec;
+    #[test]
+    fn size_hints_work() {
+        let ex = vec![5, 7, 19, 21, 36];
+        let mut f = FisherYates::new(ex.as_slice());
+        assert_eq!(f.size_hint(), (1, Some(120)));
+        assert!(f.next().is_some());
+        let mut s = SatCycles::new(ex.as_slice());
+        assert_eq!(s.size_hint(), (1, Some(120)));
+        assert!(s.next().is_some());
     }
 }
