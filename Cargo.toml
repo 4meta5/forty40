@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 sp-arithmetic = "2.0.0-rc6"
+rand = "0.7.3"
