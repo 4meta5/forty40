@@ -1,7 +1,13 @@
 //! Plan is to benchmark shuffling implementations against each other and try to optimize tf out of them
 //!
 //! Lots of applications, including the shuffle-not-swap consensus primitive and block cipher constructions (see Feistel Networks)
-use alloc::{collections::btree_map::BTreeMap, vec::Vec};
+use alloc::{
+    collections::btree_map::BTreeMap,
+    vec::{
+        self,
+        Vec,
+    },
+};
 use rand::Rng;
 
 #[derive(Clone)]
@@ -53,7 +59,7 @@ impl<T: Clone + Ord> Iterator for FisherYates<T> {
         if n == 0 {
             (0, Some(0))
         } else {
-            (1, Some((1..n + 1).product())) //n!
+            (1, Some((1..n + 1).product())) // n!
         }
     }
 }
@@ -105,7 +111,7 @@ impl<T: Clone + Ord> Iterator for SatCycles<T> {
         if n == 0 {
             (0, Some(0))
         } else {
-            (1, Some((1..n + 1).product())) //n!
+            (1, Some((1..n + 1).product())) // n!
         }
     }
 }
@@ -142,7 +148,7 @@ impl<T: Clone> Transform for SatCycles<T> {
             });
             if ret_early {
                 // if (i) or (ii) are true, we cannot perform the transform because the input is unsafe
-                return false;
+                return false
             }
             // remap elements from current(0, 1, 2, ...) to passed in indices
             let mut new_inner = Vec::<T>::new();
