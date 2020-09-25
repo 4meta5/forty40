@@ -3,14 +3,7 @@ name = "forty40"
 version = "0.0.1"
 authors = ["4meta5 <asinghchrony@protonmail.com>"]
 edition = "2018"
-description = "library for generating permutations"
+description = "library for shuffling bits and generating permutations"
 
 [dependencies]
 rand = "0.7.3"
-
-[dev-dependencies]
-criterion = "0.3.3"
-
-[[bench]]
-name = "benchmark"
-harness = false

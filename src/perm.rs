@@ -8,7 +8,7 @@ impl<T: Clone + Ord> Permutation<T> {
     pub fn new(v: &[T]) -> Permutation<T> {
         Permutation(v.to_vec())
     }
-    pub fn size_hint(&self, r: usize) -> (usize, Option<usize>) {
+    fn size_hint(&self, r: usize) -> (usize, Option<usize>) {
         let n = self.0.len();
         if n == 0 || r == 0 || r > n {
             (0, Some(0))
