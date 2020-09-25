@@ -6,10 +6,6 @@ use criterion::{
     criterion_main,
     Criterion,
 };
-use malamute::{
-    FisherYates,
-    SatCycles,
-};
 
 pub fn f_yates(c: &mut Criterion) {
     let mut fy = FisherYates::new(vec![1, 5, 9, 18, 39, 42].as_slice());
