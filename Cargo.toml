@@ -1,9 +1,10 @@
 [package]
 name = "forty40"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["4meta5 <asinghchrony@protonmail.com>"]
 edition = "2018"
 description = "shuffle bits and generate permutations"
+license = "GPL-3.0"
 
 [dependencies]
 rand = "0.7.3"
