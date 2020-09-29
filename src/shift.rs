@@ -45,7 +45,7 @@ pub fn shift<T: Clone>(v: Vec<T>, t: Transform) -> Option<Vec<T>> {
 
 /// [src]: https://en.wikipedia.org/wiki/Fisher–Yates_shuffle#The_modern_algorithm
 pub fn fy_shuffle(len: usize) -> Vec<usize> {
-    let mut state = (0..len).map(|a| a).collect::<Vec<usize>>();
+    let mut state = (0..len).collect::<Vec<usize>>();
     let mut rng = rand::thread_rng();
     let mut counter = state.len() - 1usize;
     while counter > 0 {
