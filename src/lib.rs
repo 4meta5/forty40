@@ -1,4 +1,5 @@
 mod perm;
+mod shift;
 use perm::Permutation;
 use rand::Rng;
 
