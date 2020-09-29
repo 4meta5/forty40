@@ -1,7 +1,7 @@
 mod perm;
 mod shift;
-use perm::Permutation;
-use rand::Rng;
+pub use perm::Permutation;
+pub use shift::*;
 
 /// Returns all permutations of the input string
 pub fn full_shuffle(s: &str) -> Option<Vec<String>> {
@@ -30,23 +30,6 @@ pub fn shuffle(s: &str) -> String {
         }
     });
     ret
-}
-/// [src]: https://en.wikipedia.org/wiki/Fisher–Yates_shuffle#The_modern_algorithm
-fn algo_p(len: usize) -> Vec<usize> {
-    let mut state = Vec::<usize>::new();
-    for i in 0..len {
-        state.push(i);
-    }
-    let mut rng = rand::thread_rng();
-    let mut counter = state.len() - 1usize;
-    while counter > 0 {
-        let j = rng.gen_range(0, counter);
-        if counter != j {
-            state.swap(counter, j);
-        }
-        counter -= 1usize;
-    }
-    state
 }
 
 #[cfg(test)]

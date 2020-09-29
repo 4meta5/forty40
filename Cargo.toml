@@ -3,7 +3,7 @@ name = "forty40"
 version = "0.0.1"
 authors = ["4meta5 <asinghchrony@protonmail.com>"]
 edition = "2018"
-description = "library for shuffling bits and generating permutations"
+description = "shuffle bits and generate permutations"
 
 [dependencies]
 rand = "0.7.3"
