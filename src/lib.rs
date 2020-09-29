@@ -2,8 +2,6 @@ mod perm;
 use perm::Permutation;
 use rand::Rng;
 
-const MAX_PERM: usize = 16;
-
 /// Returns all permutations of the input string
 pub fn full_shuffle(s: &str) -> Option<Vec<String>> {
     let s = s.as_bytes();

@@ -8,40 +8,48 @@ impl<T: Clone + Ord> Permutation<T> {
     pub fn new(v: &[T]) -> Permutation<T> {
         Permutation(v.to_vec())
     }
-    fn size_hint(&self, r: usize) -> (usize, Option<usize>) {
+    fn count(&self, r: usize) -> Option<usize> {
         let n = self.0.len();
         if n == 0 || r == 0 || r > n {
-            (0, Some(0))
+            None
         } else {
-            (1, Some(((n - r + 1)..n + 1).product())) // n! / (n - r)!
+            Some(((n - r + 1)..n + 1).product()) // n! / (n - r)!
         }
     }
-    /// Heaps Algorithm for generating all r-permutations
+    /// Lexicographic r-permutation generation, from Knuth The Art of Programming Volume 4A Section 7.2.1.2
     pub fn generate(&mut self, r: usize) -> Option<Vec<Vec<T>>> {
         let n = self.0.len();
         if r > n || n == 0 || r == 0 {
             return None
         }
-        // TODO: enforce bound on `r` (subset size) here, maybe 16usize
-        let mut stack = vec![0usize; self.0.len()];
         let mut ret = Vec::<Vec<T>>::new();
-        let mut i = 0usize;
-        while i < r {
-            if stack[i] < i {
-                if r % 2 == 0 {
-                    self.0.swap(i, r - 1);
-                } else {
-                    self.0.swap(0, r - 1);
+        loop {
+            if ret.is_empty() {
+                self.0.sort();
+            } else if self.0[r - 1] < self.0[n - 1] {
+                let mut j = r;
+                while self.0[j] <= self.0[r - 1] {
+                    j += 1;
                 }
-                stack[i] += 1usize;
-                i = 0usize;
-                ret.push(self.0.clone());
+                self.0.swap(r - 1, j);
             } else {
-                stack[i] = 0usize;
-                i += 1usize;
+                self.0[r..n].reverse();
+                let mut j = r - 1;
+                while j > 0 && self.0[j - 1] >= self.0[j] {
+                    j -= 1;
+                }
+                if j == 0 {
+                    return Some(ret)
+                }
+                let mut l = n - 1;
+                while self.0[j - 1] >= self.0[l] {
+                    l -= 1;
+                }
+                self.0.swap(j - 1, l);
+                self.0[j..n].reverse();
             }
+            ret.push(self.0[0..r].to_vec());
         }
-        Some(ret)
     }
 }
 
@@ -53,6 +61,7 @@ mod tests {
     fn generates_permutations() {
         let v = vec![1, 2, 3, 4, 5];
         let mut p = Permutation::new(v.as_slice());
-        assert!(p.size_hint(3) == (1usize, Some(60)));
-    }
+        assert!(p.count(3) == Some(60));
+        assert!(p.generate(3).unwrap().len() == 60);
+    } // TODO: example with duplicates, how does it deal with these by default?
 }
