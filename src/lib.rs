@@ -1,6 +1,8 @@
 mod perm;
-use perm::Permutation;
-use rand::Rng;
+mod shift;
+pub use perm::Permutation;
+pub use shift::*;
+use std::str;
 
 /// Returns all permutations of the input string
 pub fn full_shuffle(s: &str) -> Option<Vec<String>> {
@@ -20,32 +22,12 @@ pub fn full_shuffle(s: &str) -> Option<Vec<String>> {
 }
 /// Fisher Yates Shuffle, pretty useless by itself right now, just shuffles strings
 pub fn shuffle(s: &str) -> String {
-    let len = s.to_string().chars().count();
-    let shuffle = algo_p(len);
-    let mut ret = String::new();
-    shuffle.into_iter().for_each(|index| {
-        if let Some(s) = s.to_string().chars().nth(index) {
-            ret.push(s)
-        }
-    });
-    ret
-}
-/// [src]: https://en.wikipedia.org/wiki/Fisher–Yates_shuffle#The_modern_algorithm
-fn algo_p(len: usize) -> Vec<usize> {
-    let mut state = Vec::<usize>::new();
-    for i in 0..len {
-        state.push(i);
-    }
-    let mut rng = rand::thread_rng();
-    let mut counter = state.len() - 1usize;
-    while counter > 0 {
-        let j = rng.gen_range(0, counter);
-        if counter != j {
-            state.swap(counter, j);
-        }
-        counter -= 1usize;
-    }
-    state
+    let mut new = Transform::new(s.to_string().chars().count());
+    let shuffle = new.shuffle();
+    // TODO: rm unwraps and add proper error handling
+    str::from_utf8(&shift(s.as_bytes().to_vec(), shuffle).unwrap())
+        .unwrap()
+        .to_string()
 }
 
 #[cfg(test)]
@@ -53,10 +35,7 @@ mod tests {
     use super::*;
     #[test]
     fn basic_shuffle_works() {
-        assert!(
-            shuffle("Happy Birthday To You")
-                != "Happy Birthday To You".to_string()
-        );
+        assert!(shuffle("Happy Birthday To You") != "Happy Birthday To You");
     }
     #[test]
     fn full_shuffle_starts() {
