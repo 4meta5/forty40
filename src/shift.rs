@@ -5,7 +5,7 @@ pub struct Transform(pub Vec<usize>);
 
 impl Transform {
     pub fn new(len: usize) -> Self {
-        Transform((0..len).map(|a| a).collect::<Vec<usize>>())
+        Transform((0..len).collect::<Vec<usize>>())
     }
     pub fn shuffle(&mut self) -> Self {
         Transform(fy_shuffle(self.0.len()))
