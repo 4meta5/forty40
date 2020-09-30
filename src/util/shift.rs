@@ -31,16 +31,15 @@ impl Transform {
 }
 
 /// Apply an index permutation to the input vector v
-pub fn shift<T: Clone>(v: Vec<T>, t: Transform) -> Option<Vec<T>> {
+pub fn shift<T: Clone>(v: &[T], t: Transform) -> Vec<T> {
     if v.len() != t.0.len() || !t.is_valid() {
-        None
-    } else {
-        let mut ret = Vec::<T>::new();
-        t.0.into_iter().for_each(|a| {
-            ret.push(v[a].clone());
-        });
-        Some(ret)
+        panic!()
     }
+    let mut ret = Vec::<T>::new();
+    t.0.into_iter().for_each(|a| {
+        ret.push(v[a].clone());
+    });
+    ret
 }
 
 /// [src]: https://en.wikipedia.org/wiki/Fisher–Yates_shuffle#The_modern_algorithm
@@ -81,10 +80,7 @@ mod tests {
                 ret.push(x)
             }
         });
-        let st: String =
-            str::from_utf8(&shift(s.as_bytes().to_vec(), tr).unwrap())
-                .unwrap()
-                .to_string();
+        let st: String = str::from_utf8(&shift(s.as_bytes(), tr)).unwrap().to_string();
         assert!(ret == st);
     }
     #[test]

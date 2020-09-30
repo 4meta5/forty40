@@ -8,7 +8,8 @@ impl<T: Clone + Ord> Permutation<T> {
     pub fn new(v: &[T]) -> Permutation<T> {
         Permutation(v.to_vec())
     }
-    pub fn count(&self, r: usize) -> Option<usize> {
+    #[allow(dead_code)]
+    fn count(&self, r: usize) -> Option<usize> {
         let n = self.0.len();
         if n == 0 || r == 0 || r > n {
             None
