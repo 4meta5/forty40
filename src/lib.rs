@@ -4,8 +4,7 @@ use std::str;
 
 /// Returns all permutations of the input string
 pub fn full_shuffle(s: &str) -> Option<Vec<String>> {
-    let len = s.len();
-    if len > 16usize {
+    if s.len() > 16usize {
         return None
     }
     permute_str!(s.to_string())
