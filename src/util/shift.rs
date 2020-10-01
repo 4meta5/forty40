@@ -80,7 +80,9 @@ mod tests {
                 ret.push(x)
             }
         });
-        let st: String = str::from_utf8(&shift(s.as_bytes(), tr)).unwrap().to_string();
+        let st: String = str::from_utf8(&shift(s.as_bytes(), tr))
+            .unwrap()
+            .to_string();
         assert!(ret == st);
     }
     #[test]

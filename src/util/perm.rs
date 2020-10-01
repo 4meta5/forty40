@@ -4,7 +4,12 @@ use std::vec::Vec;
 #[derive(Clone)]
 pub struct Permutation<T>(Vec<T>);
 
+pub fn from_str(s: String) -> Permutation<u8> {
+    Permutation(s.as_bytes().to_vec())
+}
+
 impl<T: Clone + Ord> Permutation<T> {
+    #[allow(dead_code)]
     pub fn new(v: &[T]) -> Permutation<T> {
         Permutation(v.to_vec())
     }
