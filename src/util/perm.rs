@@ -1,19 +1,13 @@
-//! Multipermutations
+//! Permutation object
 use std::vec::Vec;
 
 #[derive(Clone)]
 pub struct Permutation<T>(Vec<T>);
 
-pub fn from_str(s: String) -> Permutation<u8> {
-    Permutation(s.as_bytes().to_vec())
-}
-
 impl<T: Clone + Ord> Permutation<T> {
-    #[allow(dead_code)]
     pub fn new(v: &[T]) -> Permutation<T> {
         Permutation(v.to_vec())
     }
-    #[allow(dead_code)]
     fn count(&self, r: usize) -> Option<usize> {
         let n = self.0.len();
         if n == 0 || r == 0 || r > n {
@@ -69,5 +63,5 @@ mod tests {
         let mut p = Permutation::new(v.as_slice());
         assert!(p.count(3) == Some(60));
         assert!(p.generate(3).unwrap().len() == 60);
-    } // TODO: example with duplicates, how does it deal with these by default?
+    }
 }

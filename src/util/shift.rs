@@ -63,31 +63,25 @@ mod tests {
     use std::str;
     #[test]
     fn transform_meets_validity_defn() {
-        let s = "beeboopbopboop";
+        let s = vec![1, 2, 3, 4, 5, 6];
         let t = fy_shuffle(s.len());
         let tr = Transform(t);
         assert!(tr.is_valid());
     }
     #[test]
     fn transform_works() {
-        let s = "beeboopbopboop";
+        let s = vec![1, 2, 3, 4, 5, 6];
         let t = fy_shuffle(s.len());
         let tr = Transform(t.clone());
-        let mut ret = String::new();
+        let mut ret = Vec::new();
         // manual transform applied to string
-        t.into_iter().for_each(|index| {
-            if let Some(x) = s.to_string().chars().nth(index) {
-                ret.push(x)
-            }
-        });
-        let st: String = str::from_utf8(&shift(s.as_bytes(), tr))
-            .unwrap()
-            .to_string();
+        t.into_iter().for_each(|index| ret.push(s[index]));
+        let st = shift(&s, tr);
         assert!(ret == st);
     }
     #[test]
     fn shuffle_is_valid() {
-        let s = "beeboopbopboop";
+        let s = vec![1, 2, 3, 4, 5, 6];
         let mut tr = Transform::new(s.len());
         let sh = tr.shuffle();
         assert!(sh.is_valid());
