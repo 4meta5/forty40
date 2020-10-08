@@ -2,53 +2,92 @@
 use std::vec::Vec;
 
 #[derive(Clone)]
-pub struct Permutation<T>(Vec<T>);
+pub struct Permutation<T> {
+    index: usize,
+    data: Vec<T>,
+}
 
 impl<T: Clone + Ord> Permutation<T> {
+    /// Create new permutation from a set of objects
     pub fn new(v: &[T]) -> Permutation<T> {
-        Permutation(v.to_vec())
-    }
-    fn count(&self, r: usize) -> Option<usize> {
-        let n = self.0.len();
-        if n == 0 || r == 0 || r > n {
-            None
-        } else {
-            Some(((n - r + 1)..n + 1).product()) // n! / (n - r)!
+        let mut v = v.to_vec();
+        v.sort();
+        v.dedup();
+        Permutation {
+            index: 0usize,
+            data: v,
         }
     }
+    pub fn index(&self) -> usize {
+        self.index
+    }
+    pub fn data(&self) -> Vec<T> {
+        self.data.clone()
+    }
+}
+
+impl<T: Clone> Iterator for Permutation<T> {
+    type Item = Vec<T>;
+
+    // next() is the only required method
+    fn next(&mut self) -> Option<Self::Item> {
+        // Increment our count. This is why we started at zero.
+        self.index += 1;
+        todo!()
+    }
+}
+
+pub trait Generate<T> {
+    type Perm;
+    fn generate(&self, r: usize) -> Option<Self::Perm>;
+    fn count(&self, r: usize) -> Option<usize>;
+}
+
+impl<T: Clone + PartialOrd + Ord> Generate<T> for Permutation<T> {
+    type Perm = Vec<Vec<T>>;
     /// Lexicographic r-permutation generation, from Knuth The Art of Programming Volume 4A Section 7.2.1.2
-    pub fn generate(&mut self, r: usize) -> Option<Vec<Vec<T>>> {
-        let n = self.0.len();
+    fn generate(&self, r: usize) -> Option<Self::Perm> {
+        let mut current = self.data.clone();
+        let n = current.len();
         if r > n || n == 0 || r == 0 {
             return None
         }
         let mut ret = Vec::<Vec<T>>::new();
         loop {
             if ret.is_empty() {
-                self.0.sort();
-            } else if self.0[r - 1] < self.0[n - 1] {
+                current.sort();
+            } else if current[r - 1] < current[n - 1] {
                 let mut j = r;
-                while self.0[j] <= self.0[r - 1] {
+                while current[j] <= current[r - 1] {
                     j += 1;
                 }
-                self.0.swap(r - 1, j);
+                current.swap(r - 1, j);
             } else {
-                self.0[r..n].reverse();
+                current[r..n].reverse();
                 let mut j = r - 1;
-                while j > 0 && self.0[j - 1] >= self.0[j] {
+                while j > 0 && current[j - 1] >= current[j] {
                     j -= 1;
                 }
                 if j == 0 {
                     return Some(ret)
                 }
                 let mut l = n - 1;
-                while self.0[j - 1] >= self.0[l] {
+                while current[j - 1] >= current[l] {
                     l -= 1;
                 }
-                self.0.swap(j - 1, l);
-                self.0[j..n].reverse();
+                current.swap(j - 1, l);
+                current[j..n].reverse();
             }
-            ret.push(self.0[0..r].to_vec());
+            ret.push(current[0..r].to_vec());
+        }
+    }
+    /// Returns the number of r-permutations for passed in r-value
+    fn count(&self, r: usize) -> Option<usize> {
+        let n = self.data.len();
+        if n == 0 || r == 0 || r > n {
+            None
+        } else {
+            Some(((n - r + 1)..n + 1).product()) // n! / (n - r)!
         }
     }
 }

@@ -60,7 +60,6 @@ pub fn fy_shuffle(len: usize) -> Vec<usize> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::str;
     #[test]
     fn transform_meets_validity_defn() {
         let s = vec![1, 2, 3, 4, 5, 6];
