@@ -21,7 +21,7 @@ macro_rules! permute {
         match $vec {
             v => {
                 let len = v.len();
-                use $crate::util::perm::Generate;
+                use $crate::util::perm::GenerateR;
                 $crate::util::perm::Permutation::new(v.as_slice()).generate(len)
             }
         }
@@ -29,7 +29,7 @@ macro_rules! permute {
     ($vec:expr; $r:expr) => {
         match $vec {
             v => {
-                use $crate::util::perm::Generate;
+                use $crate::util::perm::GenerateR;
                 $crate::util::perm::Permutation::new(v.as_slice()).generate($r)
             }
         }
@@ -38,7 +38,7 @@ macro_rules! permute {
 
 #[cfg(test)]
 mod tests {
-    use crate::util::perm::Generate;
+    use crate::util::perm::GenerateR;
     #[test]
     fn check_shuffle_len_constant() {
         let s = vec![1, 2, 3, 4, 5, 6];
@@ -48,7 +48,7 @@ mod tests {
     #[test]
     fn check_r_permute() {
         let vec = vec![1, 2, 3, 4, 5];
-        let mut p = crate::util::perm::Permutation::new(vec.as_slice());
+        let p = crate::util::perm::Permutation::new(vec.as_slice());
         let n = p.generate(3);
         assert!(n == permute!(vec; 3));
     }

@@ -3,53 +3,52 @@ use std::vec::Vec;
 
 #[derive(Clone)]
 pub struct Permutation<T> {
-    index: usize,
+    ptr: usize,
     data: Vec<T>,
 }
 
 impl<T: Clone + Ord> Permutation<T> {
-    /// Create new permutation from a set of objects
     pub fn new(v: &[T]) -> Permutation<T> {
         let mut v = v.to_vec();
         v.sort();
         v.dedup();
         Permutation {
-            index: 0usize,
+            ptr: 1usize,
             data: v,
         }
     }
-    pub fn index(&self) -> usize {
-        self.index
+    pub fn ptr(&self) -> usize {
+        self.ptr
     }
     pub fn data(&self) -> Vec<T> {
         self.data.clone()
     }
 }
 
-impl<T: Clone> Iterator for Permutation<T> {
+impl<T: Clone + PartialOrd> Iterator for Permutation<T> {
     type Item = Vec<T>;
-
-    // next() is the only required method
+    /// Sequential permutation generation
     fn next(&mut self) -> Option<Self::Item> {
-        // Increment our count. This is why we started at zero.
-        self.index += 1;
         todo!()
     }
 }
 
-pub trait Generate<T> {
+pub trait GenerateR<T> {
     type Perm;
     fn generate(&self, r: usize) -> Option<Self::Perm>;
-    fn count(&self, r: usize) -> Option<usize>;
+    fn count_perms(&self, r: usize) -> Option<usize>;
 }
 
-impl<T: Clone + PartialOrd + Ord> Generate<T> for Permutation<T> {
+impl<T: Clone + PartialOrd + Ord> GenerateR<T> for Permutation<T> {
     type Perm = Vec<Vec<T>>;
-    /// Lexicographic r-permutation generation, from Knuth The Art of Programming Volume 4A Section 7.2.1.2
+    /// Knuth Algorithm X for Permutation Generation, Vol 4A Sec 7.2.1.2
     fn generate(&self, r: usize) -> Option<Self::Perm> {
         let mut current = self.data.clone();
         let n = current.len();
-        if r > n || n == 0 || r == 0 {
+        // limit to prevent permutation generation for anything greater than 16!
+        // -> TODO: similar limit for when n! / (n - r)! >= 16!
+        let comp_limit = r == n && n > 16usize;
+        if r > n || n == 0 || r == 0 || comp_limit {
             return None
         }
         let mut ret = Vec::<Vec<T>>::new();
@@ -82,7 +81,7 @@ impl<T: Clone + PartialOrd + Ord> Generate<T> for Permutation<T> {
         }
     }
     /// Returns the number of r-permutations for passed in r-value
-    fn count(&self, r: usize) -> Option<usize> {
+    fn count_perms(&self, r: usize) -> Option<usize> {
         let n = self.data.len();
         if n == 0 || r == 0 || r > n {
             None
@@ -99,8 +98,8 @@ mod tests {
     #[test]
     fn generates_permutations() {
         let v = vec![1, 2, 3, 4, 5];
-        let mut p = Permutation::new(v.as_slice());
-        assert!(p.count(3) == Some(60));
-        assert!(p.generate(3).unwrap().len() == 60);
+        let p = Permutation::new(v.as_slice());
+        assert!(p.count_perms(3) == Some(60));
+        assert!(p.generate(5).unwrap().len() == 120);
     }
 }
