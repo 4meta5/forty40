@@ -16,6 +16,30 @@ macro_rules! shuffle {
 }
 
 #[macro_export]
+macro_rules! perm_next {
+    ($vec:expr) => {
+        match $vec {
+            v => {
+                use $crate::util::perm::PermIter;
+                $crate::util::perm::Permutation(v).next()
+            }
+        }
+    };
+}
+
+#[macro_export]
+macro_rules! perm_last {
+    ($vec:expr) => {
+        match $vec {
+            v => {
+                use $crate::util::perm::PermIter;
+                $crate::util::perm::Permutation(v).prev()
+            }
+        }
+    };
+}
+
+#[macro_export]
 macro_rules! permute {
     ($vec:expr) => {
         match $vec {
@@ -53,13 +77,20 @@ mod tests {
         assert!(n == permute!(vec; 3));
     }
     #[test]
-    fn more() {
-        let cards = vec![1, 2, 3, 4]; // any T: Clone + Ord
+    fn check_shuffle_permute() {
+        let cards = vec![1, 2, 3, 4];
         let cards_copy = cards.clone();
         let cc2 = cards.clone();
         let shuffled_cards = shuffle!(cards);
         assert!(shuffled_cards != cc2 && shuffled_cards.len() == cc2.len());
         let all_three_drawings = permute!(cards_copy; 3);
         assert!(all_three_drawings.is_some());
+    }
+    #[test]
+    fn next_last() {
+        let cards = vec![1, 2, 3, 4];
+        assert!(perm_next!(cards.clone()).is_some());
+        let one = perm_next!(cards.clone()).unwrap();
+        assert!(perm_last!(one) == Some(cards));
     }
 }
