@@ -16,6 +16,15 @@ macro_rules! shuffle {
 }
 
 #[macro_export]
+macro_rules! shuffle_str {
+    ($str:expr) => {
+        match $str {
+            s => $crate::util::shift::string_shuffle(&s),
+        }
+    };
+}
+
+#[macro_export]
 macro_rules! perm_next {
     ($vec:expr) => {
         match $vec {
@@ -92,5 +101,32 @@ mod tests {
         assert!(perm_next!(cards.clone()).is_some());
         let one = perm_next!(cards.clone()).unwrap();
         assert!(perm_last!(one) == Some(cards));
+    }
+    #[test]
+    fn shuffle_str_works() {
+        let xa = "abcdefghijklmnopqrstuvwxyz";
+        let xb = shuffle_str!(xa);
+        for xc in xa.chars() {
+            assert!(xb.contains(xc));
+        }
+        assert!(xb.len() == xa.len());
+        let xd = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let xe = shuffle_str!(xd);
+        for xf in xd.chars() {
+            assert!(xe.contains(xf));
+        }
+        assert!(xd.len() == xe.len());
+        let xg = "0123456789";
+        let xh = shuffle_str!(xg);
+        for xi in xg.chars() {
+            assert!(xh.contains(xi));
+        }
+        assert!(xg.len() == xh.len());
+        let xj = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+        let xk = shuffle_str!(xj);
+        for xl in xj.chars() {
+            assert!(xk.contains(xl));
+        }
+        assert!(xj.len() == xk.len());
     }
 }

@@ -1,5 +1,8 @@
 //! Apply Permutations to Vec<T> by a permutation of the index vector
-use rand::Rng;
+use rand::{
+    seq::SliceRandom,
+    Rng,
+};
 
 pub struct Transform(pub Vec<usize>);
 
@@ -55,6 +58,13 @@ pub fn fy_shuffle(len: usize) -> Vec<usize> {
         counter -= 1usize;
     }
     state
+}
+
+pub fn string_shuffle(s: &str) -> String {
+    let mut rng = rand::thread_rng();
+    let mut bytes = s.to_string().into_bytes();
+    bytes.shuffle(&mut rng);
+    String::from_utf8(bytes).unwrap()
 }
 
 #[cfg(test)]
